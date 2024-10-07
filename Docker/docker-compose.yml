@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  xnec:
+    build:
+      context: .  # The Dockerfile is assumed to be in the same directory
+    image: xnec-image  # You can change this if you want to tag it differently
+    container_name: xnec-container
+    environment:
+      - DISPLAY=host.docker.internal:0  # Forward the display to host.docker.internal on Windows/macOS
+    volumes:
+      # For Linux, you can uncomment the following line to use the Unix socket
+      #- /tmp/.X11-unix:/tmp/.X11-unix 
+      - /tmp/.X11-unix:/tmp/.X11-unix  # This is for X11 forwarding (you can remove if using Windows/macOS with host.docker.internal)
+    stdin_open: true
+    tty: true
+    network_mode: "host"  # This is needed to forward display connections correctly (particularly on macOS/Windows)
+
