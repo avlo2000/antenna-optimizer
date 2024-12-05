@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 from PyNEC import *
 from scipy.spatial.transform import Rotation
@@ -14,8 +16,8 @@ class BendingPoint:
 
 class BendedMonopole(Antenna_Model):
     bending_radius = 0.01
-    segment_len = 0.003
-    wire_radius = 0.0015
+    segment_len = 0.02
+    wire_radius = 0.01
 
     def __init__(self, bending_points: list[BendingPoint], **kwargs):
         self.bending_points = bending_points
@@ -60,7 +62,7 @@ class BendedMonopole(Antenna_Model):
         for p0, p1 in zip(segments[:-1], segments[1:]):
             n_seg = int(np.linalg.norm(p1 - p0) / self.segment_len)
             geo.wire(self.tag
-                     , n_seg
+                     , 30
                      , p0[0], p0[1], p0[2]
                      , p1[0], p1[1], p1[2]
                      , self.wire_radius
@@ -73,13 +75,18 @@ class BendedMonopole(Antenna_Model):
 if __name__ == '__main__':
     def main():
         antenna = BendedMonopole([
-            BendingPoint(0.1, 0, 0),
-            BendingPoint(0.1, 0, 90),
-            BendingPoint(0.1, 40, -90),
-            BendingPoint(0.1, 0, 0),
-        ])
+            BendingPoint(2 * 0.12491352, 0, 0),
+        ],
+            frq_min=[1100], frq_max=[2500]
+        )
+
         with open('bended_test.nec', 'w') as f:
-            text = antenna.as_nec(compute=False)
+            text = antenna.as_nec(compute=True)
             f.write(text)
             f.write('\n')
+        t0 = time.time()
+        antenna.compute()
+        print(f'Compute time: {time.time() - t0}')
+        antenna.swr_plot()
+        print(antenna.max_f_r_gain())
     main()

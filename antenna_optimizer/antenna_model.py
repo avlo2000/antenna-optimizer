@@ -205,7 +205,6 @@ class Antenna_Model (autosuper):
 
     name          = 'Antenna Model'
     wire_radius   = 1.5e-3 / 2.0
-    boom_radius   = wire_radius
     impedance     = 50.0
     frq_step_max  = 201
     frq_ranges    = [(430, 440)]
@@ -216,10 +215,9 @@ class Antenna_Model (autosuper):
 
     def __init__ \
         ( self
-        , frq_step_max     = 201
-        , frq_step_nec     = 201 # only for necout
+        , frq_step_max     = 151
+        , frq_step_nec     = 151 # only for necout
         , wire_radius      = wire_radius
-        , boom_radius      = boom_radius
         , avg_gain         = False
         , force_horizontal = False
         , force_forward    = False
@@ -234,7 +232,6 @@ class Antenna_Model (autosuper):
         self.theta_horz    = 90 / self.theta_inc
         self.phi_mid       = self.phi_max   // 2
         self.wire_radius   = wire_radius
-        self.boom_radius   = boom_radius
         self.frq_step_max  = frq_step_max
         self.frq_step_nec  = frq_step_nec
         self.frqinc        = []
@@ -339,6 +336,7 @@ class Antenna_Model (autosuper):
             idx = n * self.frq_step_max + frq_step
             if idx not in rp:
                 rp [idx] = self.nec.get_radiation_pattern (idx + off)
+        a = 0
     # end def compute
 
     def frq_step_range (self, step = 1):
